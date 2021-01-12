@@ -54,8 +54,6 @@ const HomePage: NextPage = () => {
 					padding: 0.4em;
 					margin: 0 0 0.5em 0;
 					box-sizing: border-box;
-					border: 1px solid #ccc;
-					border-radius: 2px;
 				}
 			`}</style>
 		</Provider>
