@@ -13,9 +13,7 @@ export const generateRandomId = (): string =>
 
 export const getStyleStr = (styleObj: object): string =>
 	Object.keys(styleObj)
-		.map((property) => {
-			return `${property}: ${styleObj[property]};`;
-		})
+		.map((property) => `${property}: ${styleObj[property]};`)
 		.join("\n");
 
 export const getStyleObj = (variant = Variant.NORMAL): object => {
