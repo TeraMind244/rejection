@@ -1,13 +1,31 @@
 import { NextPage } from "next";
-import { createStore } from "redux";
 import { Provider } from "react-redux";
-import RejectionReducer from "../store/RejectionReducers";
+import { applyMiddleware, createStore } from "redux";
+import createSagaMiddleware from "redux-saga";
+
 import Form from "../components/Form";
 import Points from "../components/Points";
 import Questions from "../components/Questions";
+import RejectionReducer from "../store/RejectionReducers";
+import sagas from "../sagas";
+import { getObj } from "../utils/LocalStorageUtils";
+import { LocalStorageKey } from "../utils/contants";
+import { IQuestion } from "../types/Rejection";
+
+const isServer = () => typeof window === "undefined";
 
 const HomePage: NextPage = () => {
-	const store = createStore(RejectionReducer);
+	const initialState = {
+		questions: getObj<IQuestion[]>(LocalStorageKey.QUESTIONS),
+	};
+
+	const sagaMiddleware = createSagaMiddleware();
+	const store = createStore(
+		RejectionReducer,
+		initialState,
+		applyMiddleware(sagaMiddleware)
+	);
+	sagaMiddleware.run(sagas);
 
 	return (
 		<Provider store={store}>
@@ -25,7 +43,7 @@ const HomePage: NextPage = () => {
 				}
 				div {
 					background-color: #dddddd;
-					margin: 20px 50px 0;
+					margin: 20px 50px;
 					border-radius: 10px;
 					border: 1px solid black;
 					padding: 50px;

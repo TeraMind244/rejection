@@ -1,4 +1,5 @@
 import { createSelector } from "reselect";
+import { QuestionStatus } from "../types/Rejection";
 import { IStateProps } from "./RejectionReducers";
 
 export namespace RejectionSelectors {
@@ -7,9 +8,9 @@ export namespace RejectionSelectors {
 	export const points = createSelector(questions, (questions) =>
 		questions.reduce((acc, { status }) => {
 			switch (status) {
-				case "Accepted":
+				case QuestionStatus.ACCEPTED:
 					return acc + 1;
-				case "Rejected":
+				case QuestionStatus.REJECTED:
 					return acc + 10;
 				default:
 					return acc;
