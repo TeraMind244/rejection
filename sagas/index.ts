@@ -1,9 +1,10 @@
 import { all, fork } from "redux-saga/effects";
 
-import { addQuestionSaga } from "./AddQuestionSaga";
+import { persistStateSaga } from "./PersistStateSaga";
+import { restoreStateSaga } from "./RestoreStateSaga";
 
 function* rootSaga() {
-	yield all([fork(addQuestionSaga)]);
+	yield all([fork(persistStateSaga), fork(restoreStateSaga)]);
 }
 
 export default rootSaga;

@@ -1,12 +1,9 @@
 import { Variant } from "../types/Rejection";
 
-const formatNumberForDate = (num: number): string =>
-	`${(num + "").padStart(2, "0")}`;
+const formattor = new Intl.DateTimeFormat("en-GB");
 
 export const datetimeFormatter = (date = new Date()): string =>
-	`${formatNumberForDate(date.getDate())}/${formatNumberForDate(
-		date.getMonth() + 1
-	)}/${date.getFullYear()}`;
+	formattor.format(date);
 
 export const generateRandomId = (): string =>
 	Math.random().toString(36).slice(2);

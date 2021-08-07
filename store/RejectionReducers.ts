@@ -1,17 +1,11 @@
-import { Action } from "typescript-fsa";
-
-import { IQuestion } from "../types/Rejection";
-import { LocalStorageKey } from "../utils/contants";
-import { getObj } from "../utils/LocalStorageUtils";
 import { RejectionActions } from "./RejectionActions";
+
+import type { Action } from "typescript-fsa";
+import type { IQuestion } from "../types/Rejection";
 
 export interface IStateProps {
 	questions: IQuestion[];
 }
-
-const INITIAL_STATE: IStateProps = {
-	questions: getObj<IQuestion[]>(LocalStorageKey.QUESTIONS),
-};
 
 interface IActionMap {
 	[actionType: string]: (
@@ -20,9 +14,14 @@ interface IActionMap {
 	) => IStateProps;
 }
 
+const INITIAL_STATE: IStateProps = {
+	questions: [],
+};
+
 const ACTION_MAP: IActionMap = {
 	[RejectionActions.addQuestion.type]: addQuestion,
 	[RejectionActions.removeQuestion.type]: removeQuestion,
+	[RejectionActions.restoreQuestions.type]: restoreQuestions,
 };
 
 const reducer = (state = INITIAL_STATE, action: Action<any>): IStateProps => {
@@ -51,6 +50,13 @@ function removeQuestion(
 	return {
 		...state,
 		questions: questions.filter((question) => question.id !== id),
+	};
+}
+
+function restoreQuestions(state: IStateProps, { payload: persistedQuestions }: Action<IQuestion[]>): IStateProps {
+	return {
+		...state,
+		questions: persistedQuestions
 	};
 }
 

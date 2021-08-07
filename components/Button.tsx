@@ -1,6 +1,9 @@
-import { MouseEvent } from "react";
-import { Variant } from "../types/Rejection";
+import { memo } from "react";
+
 import { getStyleObj, getStyleStr } from "../utils";
+
+import type { PropsWithChildren, MouseEvent } from "react";
+import type { Variant } from "../types/Rejection";
 
 interface IOwnProps {
 	variant: Variant;
@@ -9,9 +12,9 @@ interface IOwnProps {
 	onClick: (ev: MouseEvent<HTMLButtonElement>) => void;
 }
 
-type IProps = IOwnProps;
+type IProps = PropsWithChildren<IOwnProps>;
 
-const Button: React.FC<IProps> = ({ variant, style, onClick, children }) => {
+const Button = memo<IProps>(({ variant, style, onClick, children }) => {
 	const buttonStyle = { ...style, ...getStyleObj(variant) };
 
 	return (
@@ -28,6 +31,7 @@ const Button: React.FC<IProps> = ({ variant, style, onClick, children }) => {
 			`}</style>
 		</>
 	);
-};
+});
+Button.displayName = "Button";
 
 export default Button;
