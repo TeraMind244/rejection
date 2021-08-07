@@ -1,9 +1,14 @@
-import { ChangeEvent, useState } from "react";
-import { connect, MapDispatchToProps } from "react-redux";
-import { RejectionActions } from "../store/RejectionActions";
-import { IQuestion, QuestionStatus, Variant } from "../types/Rejection";
-import { generateRandomId } from "../utils";
+import { useState, useCallback, memo } from "react";
+import { connect } from "react-redux";
+
 import Button from "./Button";
+import { RejectionActions } from "../store";
+import { generateRandomId } from "../utils";
+import { QuestionStatus, Variant } from "../types/Rejection";
+
+import type { MapDispatchToProps } from 'react-redux';
+import type { ChangeEvent } from "react";
+import type { IQuestion } from "../types/Rejection";
 
 interface IDispatchProps {
 	askQuestion: (question: IQuestion) => void;
@@ -11,30 +16,57 @@ interface IDispatchProps {
 
 type IProps = IDispatchProps;
 
-const Form: React.FC<IProps> = ({ askQuestion }) => {
+const Form = memo<IProps>(({ askQuestion }) => {
 	const [askee, setAskee] = useState("");
 	const [question, setQuestion] = useState("");
 
-	const handleAskeeChange = (ev: ChangeEvent<HTMLInputElement>): void => {
-		setAskee(ev.target.value);
+	const clearInputs = () => {
+		setAskee("");
+		setQuestion("");
 	};
 
-	const handleQuestionChange = (ev: ChangeEvent<HTMLInputElement>): void => {
-		setQuestion(ev.target.value);
-	};
+	const addQuestion = useCallback(
+		(status: QuestionStatus): void => {
+			if (question && askee) {
+				const newQuestion = {
+					id: generateRandomId(),
+					timestamp: Date.now(),
+					question,
+					askee,
+					status,
+				};
+				askQuestion(newQuestion);
+				clearInputs();
+			}
+		},
+		[question, askee]
+	);
 
-	const addQuestion = (status: QuestionStatus): void => {
-		if (question && askee) {
-			const newQuestion = {
-				id: generateRandomId(),
-				timestamp: Date.now(),
-				question,
-				askee,
-				status,
-			};
-			askQuestion(newQuestion);
-		}
-	};
+	const handleAskeeChange = useCallback(
+		(ev: ChangeEvent<HTMLInputElement>): void => {
+			setAskee(ev.target.value);
+		},
+		[]
+	);
+
+	const handleQuestionChange = useCallback(
+		(ev: ChangeEvent<HTMLInputElement>): void => {
+			setQuestion(ev.target.value);
+		},
+		[]
+	);
+
+	const handleAcceptQuestion = useCallback(() => {
+		addQuestion(QuestionStatus.ACCEPTED);
+	}, [addQuestion]);
+
+	const handleRejectQuestion = useCallback(() => {
+		addQuestion(QuestionStatus.REJECTED);
+	}, [addQuestion]);
+
+	const handleUnanswerredQuestion = useCallback(() => {
+		addQuestion(QuestionStatus.UNANSWERED);
+	}, [addQuestion]);
 
 	return (
 		<div className="form">
@@ -55,19 +87,16 @@ const Form: React.FC<IProps> = ({ askQuestion }) => {
 			<div className="row">
 				<Button
 					variant={Variant.PRIMARY}
-					onClick={() => addQuestion(QuestionStatus.ACCEPTED)}
+					onClick={handleAcceptQuestion}
 				>
 					{QuestionStatus.ACCEPTED}
 				</Button>
-				<Button
-					variant={Variant.DANGER}
-					onClick={() => addQuestion(QuestionStatus.REJECTED)}
-				>
+				<Button variant={Variant.DANGER} onClick={handleRejectQuestion}>
 					{QuestionStatus.REJECTED}
 				</Button>
 				<Button
 					variant={Variant.NORMAL}
-					onClick={() => addQuestion(QuestionStatus.UNANSWERED)}
+					onClick={handleUnanswerredQuestion}
 				>
 					{QuestionStatus.UNANSWERED}
 				</Button>
@@ -86,7 +115,8 @@ const Form: React.FC<IProps> = ({ askQuestion }) => {
 			`}</style>
 		</div>
 	);
-};
+});
+Form.displayName = "Form";
 
 const mapDispatchToProps: MapDispatchToProps<IDispatchProps, {}> = (
 	dispatch

@@ -1,6 +1,8 @@
 import { createSelector } from "reselect";
+
 import { QuestionStatus } from "../types/Rejection";
-import { IStateProps } from "./RejectionReducers";
+
+import type { IStateProps } from "./RejectionReducers";
 
 export namespace RejectionSelectors {
 	export const questions = (state: IStateProps) => state.questions;

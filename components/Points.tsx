@@ -1,6 +1,9 @@
+import { memo } from "react";
 import { connect, MapStateToProps } from "react-redux";
-import { IStateProps } from "../store/RejectionReducers";
-import { RejectionSelectors } from "../store/RejectionSelectors";
+
+import { RejectionSelectors } from "../store";
+
+import type { IStateProps } from "../store/RejectionReducers";
 
 interface IOwnProps {
 	points: number;
@@ -8,7 +11,7 @@ interface IOwnProps {
 
 type IProps = IOwnProps;
 
-const Points: React.FC<IProps> = ({ points }) => {
+const Points = memo<IProps>(({ points }) => {
 	return (
 		<h2>
 			{`Point${points !== 1 ? "s" : ""}: `}
@@ -21,7 +24,8 @@ const Points: React.FC<IProps> = ({ points }) => {
 			`}</style>
 		</h2>
 	);
-};
+});
+Points.displayName = "Points";
 
 const mapStateToProps: MapStateToProps<IOwnProps, {}, IStateProps> = (
 	state

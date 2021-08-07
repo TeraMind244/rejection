@@ -1,14 +1,18 @@
-import { ReactNode } from "react";
+import { useEffect } from "react";
+import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
-import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
-import { RejectionActions } from "../store/RejectionActions";
-import { IStateProps } from "../store/RejectionReducers";
-import { RejectionSelectors } from "../store/RejectionSelectors";
-import { IQuestion, QuestionStatus, Variant } from "../types/Rejection";
-import { datetimeFormatter } from "../utils";
+
 import Button from "./Button";
 import Status from "./Status";
+import { RejectionActions, RejectionSelectors } from "../store";
+import { QuestionStatus, Variant } from "../types/Rejection";
+import { datetimeFormatter } from "../utils";
+
+import type { ReactNode } from "react";
+import type { MapDispatchToProps, MapStateToProps } from "react-redux";
+import type { IQuestion } from "../types/Rejection";
+import type { IStateProps } from "../store/RejectionReducers";
 
 const variantMap = {
 	[QuestionStatus.ACCEPTED]: Variant.PRIMARY,
@@ -63,11 +67,20 @@ interface IOwnProps {
 
 interface IDispatchProps {
 	removeQuestion: (id: string) => void;
+	restoreState: () => void;
 }
 
 type IProps = IOwnProps & IDispatchProps;
 
-const Questions: React.FC<IProps> = ({ questions, removeQuestion }) => {
+const Questions: React.FC<IProps> = ({
+	questions,
+	removeQuestion,
+	restoreState
+}) => {
+	useEffect(() => {
+		restoreState();
+	}, []);
+
 	return (
 		<>
 			<div id="data-table">
@@ -108,6 +121,7 @@ const mapDispatchToProps: MapDispatchToProps<IDispatchProps, {}> = (
 ) => {
 	return {
 		removeQuestion: (id) => dispatch(RejectionActions.removeQuestion(id)),
+		restoreState: () => dispatch(RejectionActions.restoreState())
 	};
 };
 

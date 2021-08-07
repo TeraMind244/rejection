@@ -1,5 +1,7 @@
+import { memo } from "react";
 import { faMinus, faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import { Variant } from "../types/Rejection";
 import { getStyleObj, getStyleStr } from "../utils";
 
@@ -16,7 +18,7 @@ const iconMap = {
 	[Variant.NORMAL]: faMinus,
 };
 
-const Status: React.FC<IProps> = ({ variant, style }) => {
+const Status = memo<IProps>(({ variant, style }) => {
 	const iconStyle = { ...style, ...getStyleObj(variant) };
 	const icon = iconMap[variant] || faMinus;
 
@@ -37,6 +39,7 @@ const Status: React.FC<IProps> = ({ variant, style }) => {
 			`}</style>
 		</div>
 	);
-};
+});
+Status.displayName = 'Status';
 
 export default Status;

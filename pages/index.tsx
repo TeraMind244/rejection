@@ -1,40 +1,17 @@
-import { NextPage } from "next";
-import { Provider } from "react-redux";
-import { applyMiddleware, createStore } from "redux";
-import createSagaMiddleware from "redux-saga";
+import { GetServerSideProps, NextPage } from "next";
+import { useEffect } from "react";
 
 import Form from "../components/Form";
 import Points from "../components/Points";
 import Questions from "../components/Questions";
-import RejectionReducer from "../store/RejectionReducers";
-import sagas from "../sagas";
-import { getObj } from "../utils/LocalStorageUtils";
-import { LocalStorageKey } from "../utils/contants";
-import { IQuestion } from "../types/Rejection";
-
-const isServer = () => typeof window === "undefined";
 
 const HomePage: NextPage = () => {
-	const initialState = {
-		questions: getObj<IQuestion[]>(LocalStorageKey.QUESTIONS),
-	};
-
-	const sagaMiddleware = createSagaMiddleware();
-	const store = createStore(
-		RejectionReducer,
-		initialState,
-		applyMiddleware(sagaMiddleware)
-	);
-	sagaMiddleware.run(sagas);
-
 	return (
-		<Provider store={store}>
-			<div>
-				<h2>Rejection</h2>
-				<Form />
-				<Points />
-				<Questions />
-			</div>
+		<div>
+			<h2>Rejection</h2>
+			<Form />
+			<Points />
+			<Questions />
 
 			<style jsx>{`
 				h2 {
@@ -74,8 +51,14 @@ const HomePage: NextPage = () => {
 					box-sizing: border-box;
 				}
 			`}</style>
-		</Provider>
+		</div>
 	);
+};
+
+export const getServerSideProps: GetServerSideProps = async () => {
+	return {
+		props: {},
+	};
 };
 
 export default HomePage;
