@@ -1,0 +1,4 @@
+**/*.spec.js
+**/*.test.js
+node_modules/
+.next/
